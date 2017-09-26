@@ -1,17 +1,19 @@
-StatBinscatter <- ggproto("StatBinscatter", Stat,
-                     compute_group = function(data, scales, bins = 10) {
-                       bins <- min(floor(nrow(data)/10), bins)
-                       x_bin <- ggplot2::cut_number(data$x + 1e-12*runif(nrow(data)), bins)
-                       x_means <- ave(data$x, x_bin, FUN = mean)
-                       y_means <- ave(data$y, x_bin, FUN = mean)
-                       y_se <- ave(data$y, x_bin, FUN = sd)
-                       y_obs <- ave(data$y, x_bin, FUN = length)
-                       data.frame(x = x_means, 
-                                  y = y_means, 
-                                  ymax = y_means + 1.96*y_se/sqrt(y_obs),
-                                  ymin = y_means - 1.96*y_se/sqrt(y_obs))
-                     },
-                     required_aes = c("x", "y")
+StatBinscatter <- ggplot2::ggproto(
+  "StatBinscatter", 
+  Stat,
+  compute_group = function(data, scales, bins = 10) {
+    bins     <- min(floor(nrow(data)/10), bins)
+    x_bin    <- ggplot2::cut_number(data$x + 1e-12*runif(nrow(data)), bins)
+    x_means  <- stats::ave(data$x, x_bin, FUN = mean)
+    y_means  <- stats::ave(data$y, x_bin, FUN = mean)
+    y_se     <- stats::ave(data$y, x_bin, FUN = sd)
+    y_obs    <- stats::ave(data$y, x_bin, FUN = length)
+    return(data.frame(x    = x_means, 
+                      y    = y_means, 
+                      ymax = y_means + 1.96*y_se/sqrt(y_obs),
+                      ymin = y_means - 1.96*y_se/sqrt(y_obs)))
+  },
+  required_aes = c("x", "y")
 )
 
 #' Binscatter
