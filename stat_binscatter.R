@@ -8,10 +8,12 @@ StatBinscatter <- ggplot2::ggproto(
     y_means  <- stats::ave(data$y, x_bin, FUN = mean)
     y_se     <- stats::ave(data$y, x_bin, FUN = sd)
     y_obs    <- stats::ave(data$y, x_bin, FUN = length)
-    return(data.frame(x    = x_means, 
-                      y    = y_means, 
-                      ymax = y_means + 1.96*y_se/sqrt(y_obs),
-                      ymin = y_means - 1.96*y_se/sqrt(y_obs)))
+    result   <- data.frame(x    = x_means, 
+                           y    = y_means, 
+                           ymax = y_means + 1.96*y_se/sqrt(y_obs),
+                           ymin = y_means - 1.96*y_se/sqrt(y_obs))
+    result   <- unique(result)
+    return(result)
   },
   required_aes = c("x", "y")
 )
